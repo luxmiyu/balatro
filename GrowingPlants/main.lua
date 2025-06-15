@@ -230,7 +230,7 @@ SMODS.Joker {
         }
       else
         return {
-          message = card.ability.extra.mult .. ' Mult / ' .. card.ability.extra.chips .. ' Chips',
+          message = card.ability.extra.chips .. ' Chips / ' .. card.ability.extra.mult .. ' Mult',
           colour = G.C.GREEN,
         }
       end
