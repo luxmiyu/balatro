@@ -215,7 +215,7 @@ SMODS.Joker {
 
       if not changed_mult and not changed_chips then
         return {
-          message = '+1 Growth',
+          message = '+1 Chance',
           colour = G.C.GREEN,
         }
       elseif not changed_mult then
@@ -243,11 +243,6 @@ SMODS.Joker {
         return {
           mult = card.ability.extra.mult,
           chips = card.ability.extra.chips,
-        }
-      else
-        return {
-          message = 'Unlucky',
-          colour = G.C.PURPLE
         }
       end
     end
