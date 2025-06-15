@@ -163,7 +163,7 @@ SMODS.Joker {
     }
   },
   config = { extra = { mult = 1, chips = 1, chance = 1, growth = 0 } },
-  rarity = 1,
+  rarity = 3,
   cost = 6,
   atlas = "growingplants",
   pos = {
@@ -264,7 +264,7 @@ SMODS.Joker {
     }
   },
   config = { extra = { dollars = 0, growth = 0 } },
-  rarity = 1,
+  rarity = 2,
   cost = 6,
   atlas = "growingplants",
   pos = {
