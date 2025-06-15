@@ -31,15 +31,15 @@ SMODS.Joker {
   loc_txt = {
     name = 'Mult Plant',
     text = {
-      "{C:mult}+6{} Mult per {C:green}Growth{}",
-      "{C:green}+2{} Growth per {C:gold}Ace{} or {C:gold}face{} card scored",
-      "{C:green}-1{} Growth per {C:gold}2{}-{C:gold}10{} card scored",
+      "{C:mult}+2{} Mult per {C:green}Growth{}",
+      "{C:green}+2{} Growth per {C:gold}Ace{} scored",
+      "{C:green}+1{} Growth per {C:gold}face{} card scored",
       "{C:inactive}(Grown {C:green}#1#{C:inactive} times)",
     }
   },
   config = { extra = { growth = 0 } },
   rarity = 1,
-  cost = 4,
+  cost = 6,
   atlas = "growingplants",
   pos = {
     x = 1,
@@ -50,29 +50,21 @@ SMODS.Joker {
   end,
   calculate = function(self, card, context)
     if self.debuff then return nil end
-    if context.before and not context.blueprint then
+    if context.before then
       local growth_modifier = 0
 
-      for i, other_card in ipairs(scoring_hand) do
-        local id = other_card:get_id()
-
-        if id == 11 or id == 12 or id == 13 or id == 14 then
+      for i, other_card in ipairs(context.scoring_hand) do
+        if other_card:get_id() == 14 then
           growth_modifier = growth_modifier + 2
-        else
-          growth_modifier = growth_modifier - 1
+        elseif other_card:is_face() then
+          growth_modifier = growth_modifier + 1
         end
       end
 
       card.ability.extra.growth = card.ability.extra.growth + growth_modifier
-      if card.ability.extra.growth < 0 then
-        card.ability.extra.growth = 0
-      end
 
       if growth_modifier == 0 then
-        return {
-          message = 'Unchanged',
-          colour = G.C.INACTIVE,
-        }
+        return nil
       elseif growth_modifier > 0 then
         return {
           message = '+' .. growth_modifier .. ' Growth',
@@ -87,7 +79,7 @@ SMODS.Joker {
     end
     if context.joker_main then
       return {
-        mult = card.ability.extra.growth * 6,
+        mult = card.ability.extra.growth * 2,
       }
     end
   end,
@@ -101,15 +93,15 @@ SMODS.Joker {
   loc_txt = {
     name = 'Chips Plant',
     text = {
-      "{C:chips}+60{} Chips per {C:green}Growth{}",
-      "{C:green}+2{} Growth per {C:gold}Ace{} or {C:gold}face{} card scored",
-      "{C:green}-1{} Growth per {C:gold}2{}-{C:gold}10{} card scored",
+      "{C:chips}+20{} Chips per {C:green}Growth{}",
+      "{C:green}+2{} Growth per {C:gold}Ace{} scored",
+      "{C:green}+1{} Growth per {C:gold}face{} card scored",
       "{C:inactive}(Grown {C:green}#1#{C:inactive} times)",
     }
   },
   config = { extra = { growth = 0 } },
   rarity = 1,
-  cost = 4,
+  cost = 6,
   atlas = "growingplants",
   pos = {
     x = 2,
@@ -120,30 +112,21 @@ SMODS.Joker {
   end,
   calculate = function(self, card, context)
     if self.debuff then return nil end
-    if context.before and not context.blueprint then
+    if context.before then
       local growth_modifier = 0
 
-      for i, other_card in ipairs(scoring_hand) do
-        local id = other_card:get_id()
-        print('id', id)
-
-        if id == 11 or id == 12 or id == 13 or id == 14 then
+      for i, other_card in ipairs(context.scoring_hand) do
+        if other_card:get_id() == 14 then
           growth_modifier = growth_modifier + 2
-        else
-          growth_modifier = growth_modifier - 1
+        elseif other_card:is_face() then
+          growth_modifier = growth_modifier + 1
         end
       end
 
       card.ability.extra.growth = card.ability.extra.growth + growth_modifier
-      if card.ability.extra.growth < 0 then
-        card.ability.extra.growth = 0
-      end
 
       if growth_modifier == 0 then
-        return {
-          message = 'Unchanged',
-          colour = G.C.INACTIVE,
-        }
+        return nil
       elseif growth_modifier > 0 then
         return {
           message = '+' .. growth_modifier .. ' Growth',
@@ -158,7 +141,7 @@ SMODS.Joker {
     end
     if context.joker_main then
       return {
-        chips = card.ability.extra.growth * 60,
+        chips = card.ability.extra.growth * 20,
       }
     end
   end,
@@ -172,69 +155,86 @@ SMODS.Joker {
   loc_txt = {
     name = 'Lucky Plant',
     text = {
-      "{C:green}1 in 3{} chance to get {C:mult}+#2#{} Mult{}/{C:chips}+#3#{} Chips",
-      "{C:mult}+2{} Mult per {C:gold}Ace{} or {C:gold}King{} scored",
-      "{C:chips}+10{} Chips per {C:gold}Queen{} or {C:gold}Jack{} scored",
+      "{C:green}#4# in 100{} chance to {C:chips}+#3#{} Chips/{C:mult}+#2#{} Mult{}",
+      "{X:chips,C:white}X2{} Chips if an {C:gold}Ace{} or {C:gold}King{} is scored",
+      "{X:mult,C:white}X2{} Mult if a {C:gold}Queen{} or {C:gold}Jack{} is scored",
+      "{C:green}+1{} Chance when playing a {C:legendary}hand{}",
       "{C:inactive}(Grown {C:green}#1#{C:inactive} times)",
     }
   },
-  config = { extra = { mult = 2, chips = 10, growth = 0 } },
+  config = { extra = { mult = 1, chips = 1, chance = 1, growth = 0 } },
   rarity = 1,
-  cost = 4,
+  cost = 6,
   atlas = "growingplants",
   pos = {
     x = 0,
     y = 0,
   },
   loc_vars = function(self, infoqueue, card)
-    return { vars = { card.ability.extra.growth, card.ability.extra.mult, card.ability.extra.chips } }
+    return {
+      vars = {
+        card.ability.extra.growth,
+        card.ability.extra.mult,
+        card.ability.extra.chips,
+        card.ability.extra.chance
+      }
+    }
   end,
   calculate = function(self, card, context)
     if self.debuff then return nil end
-    if context.before and not context.blueprint then
-      local mult_modifier = 0
-      local chips_modifier = 0
 
-      for i, other_card in ipairs(scoring_hand) do
-        local id = other_card:get_id()
-        if id == 14 or id == 13 then
-          mult_modifier = mult_modifier + 2
-        elseif id == 11 or id == 12 then
-          chips_modifier = chips_modifier + 10
+    if context.before then
+      local changed_mult = false
+      local changed_chips = false
+      local changed_chance = false
+
+      card.ability.extra.growth = card.ability.extra.growth + 1
+      card.ability.extra.chance = card.ability.extra.chance + 1
+
+      if card.ability.extra.chance > 100 then
+        card.ability.extra.chance = 100
+      end
+
+      for i, other_card in ipairs(context.scoring_hand) do
+        if other_card:get_id() == 14 or other_card:get_id() == 13 then
+          changed_chips = true
+        elseif other_card:get_id() == 12 or other_card:get_id() == 11 then
+          changed_mult = true
         end
       end
 
-      card.ability.extra.mult = card.ability.extra.mult + mult_modifier
-      card.ability.extra.chips = card.ability.extra.chips + chips_modifier
-
-      if mult_modifier > 0 or chips_modifier > 0 then
+      if changed_chips then
         card.ability.extra.growth = card.ability.extra.growth + 1
+        card.ability.extra.chips = card.ability.extra.chips * 2
       end
 
-      if mult_modifier == 0 and chips_modifier == 0 then
+      if changed_mult then
+        card.ability.extra.growth = card.ability.extra.growth + 1
+        card.ability.extra.mult = card.ability.extra.mult * 2
+      end
+
+      if not changed_mult and not changed_chips then
+        return nil
+      elseif not changed_mult then
         return {
-          message = 'Unchanged',
-          colour = G.C.INACTIVE,
-        }
-      elseif mult_modifier == 0 then
-        return {
-          message = '+' .. chips_modifier .. ' Chips',
+          message = card.ability.extra.chips .. ' Chips',
           colour = G.C.CHIPS,
         }
-      elseif chips_modifier == 0 then
+      elseif not changed_chips then
         return {
-          message = '+' .. mult_modifier .. ' Mult',
+          message = card.ability.extra.growth .. ' Mult',
           colour = G.C.MULT,
         }
       else
         return {
-          message = '+' .. mult_modifier .. ' Mult / +' .. chips_modifier .. ' Chips',
+          message = card.ability.extra.growth .. ' Mult / ' .. card.ability.extra.chips .. ' Chips',
           colour = G.C.GREEN,
         }
       end
     end
+
     if context.joker_main then
-      local luck_pass = math.random(3) == 1
+      local luck_pass = math.random(100) <= card.ability.extra.chance
 
       if luck_pass then
         return {
@@ -260,14 +260,14 @@ SMODS.Joker {
     name = 'Money Plant',
     text = {
       "Earn {C:gold}$#2#{} at end of round",
-      "{C:gold}+$1{} when playing a hand",
-      "{C:gold}+$5{} if an {C:gold}Ace{} is scored",
+      "{C:gold}+$1{} when playing a {C:legendary}hand{}",
+      "{C:gold}+$4{} per {C:gold}Ace{} scored",
       "{C:inactive}(Grown {C:green}#1#{C:inactive} times)",
     }
   },
   config = { extra = { dollars = 0, growth = 0 } },
   rarity = 1,
-  cost = 4,
+  cost = 6,
   atlas = "growingplants",
   pos = {
     x = 3,
@@ -278,29 +278,22 @@ SMODS.Joker {
   end,
   calculate = function(self, card, context)
     if self.debuff then return nil end
-    if context.before and not context.blueprint then
-      local found_ace = false
+    if context.before then
+      local growth_modifier = 1
       local dollars_modifier = 1
 
-      for i, other_card in ipairs(scoring_hand) do
+      for i, other_card in ipairs(context.scoring_hand) do
         if other_card:get_id() == 14 then
-          found_ace = true
+          dollars_modifier = dollars_modifier + 4
+          growth_modifier = growth_modifier + 1
         end
       end
 
-      card.ability.extra.growth = card.ability.extra.growth + 1
-
-      if found_ace then
-        dollars_modifier = dollars_modifier + 5
-      end
-
+      card.ability.extra.growth = card.ability.extra.growth + growth_modifier
       card.ability.extra.dollars = card.ability.extra.dollars + dollars_modifier
 
       if dollars_modifier == 0 then
-        return {
-          message = 'Unchanged',
-          colour = G.C.INACTIVE,
-        }
+        return nil
       else
         return {
           message = '+$' .. dollars_modifier,
