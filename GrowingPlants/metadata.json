@@ -6,10 +6,10 @@
 	"description": "Adds 4 Plants as Jokers that you can grow.",
 	"prefix": "growingplants",
 	"main_file": "main.lua",
-	"priority": 0,
+	"priority": 727,
 	"badge_colour": "58C16C",
 	"badge_text_colour": "FFFFFF",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"dependencies": [
 		"Steamodded (*)", 
 		"Lovely (*)", 
