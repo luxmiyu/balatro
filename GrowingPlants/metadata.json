@@ -1,0 +1,19 @@
+{
+	"id": "growingplants",
+	"name": "GrowingPlants",
+	"display_name": "GrowingPlants",
+	"author": ["luxmiyu"],
+	"description": "Adds 4 Plants as Jokers that you can grow.",
+	"prefix": "growingplants",
+	"main_file": "main.lua",
+	"priority": 0,
+	"badge_colour": "58C16C",
+	"badge_text_colour": "FFFFFF",
+	"version": "1.0.0",
+	"dependencies": [
+		"Steamodded (*)", 
+		"Lovely (*)", 
+		"Balatro (*)"],
+	"conflicts": [],
+	"provides": []
+}
