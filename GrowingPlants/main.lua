@@ -214,7 +214,10 @@ SMODS.Joker {
       end
 
       if not changed_mult and not changed_chips then
-        return nil
+        return {
+          message = '+1 Growth',
+          colour = G.C.GREEN,
+        }
       elseif not changed_mult then
         return {
           message = card.ability.extra.chips .. ' Chips',
@@ -222,12 +225,12 @@ SMODS.Joker {
         }
       elseif not changed_chips then
         return {
-          message = card.ability.extra.growth .. ' Mult',
+          message = card.ability.extra.mult .. ' Mult',
           colour = G.C.MULT,
         }
       else
         return {
-          message = card.ability.extra.growth .. ' Mult / ' .. card.ability.extra.chips .. ' Chips',
+          message = card.ability.extra.mult .. ' Mult / ' .. card.ability.extra.chips .. ' Chips',
           colour = G.C.GREEN,
         }
       end
